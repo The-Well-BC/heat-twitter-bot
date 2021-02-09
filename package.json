@@ -1,0 +1,26 @@
+{
+  "name": "heatbot",
+  "version": "1.0.0",
+  "description": "Twitter bot for @HEATCHECKME twitter bot",
+  "main": "app.js",
+  "scripts": {
+    "test": "mocha tests/ --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/The-Well-BC/heat-twitter-bot.git"
+  },
+  "keywords": [
+    "twitter-bot"
+  ],
+  "author": "The Well",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/The-Well-BC/heat-twitter-bot/issues"
+  },
+  "homepage": "https://github.com/The-Well-BC/heat-twitter-bot#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "helmet": "^4.4.1"
+  }
+}
