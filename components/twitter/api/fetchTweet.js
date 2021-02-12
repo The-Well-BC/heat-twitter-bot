@@ -3,19 +3,17 @@ const fetchApi = require('./_fetchTweet');
 module.exports = (id) => {
     return fetchApi(id)
     .then(res => {
-        // console.log('TWEET RESPONSE', res);
-
         let type, originalTweet = {};
 
         let response = {
-            tweet: {
-                text: res.text,
-                user: {
-                    username: res.user.screen_name
-                },
-                likes: res.favorite_count,
-                retweets: res.retweet_count,
+            id: res.id_str,
+            text: res.text,
+            user: {
+                id: res.user.id_str,
+                username: res.user.screen_name
             },
+            likes: res.favorite_count,
+            retweets: res.retweet_count,
         }
 
         if(res.in_reply_to_status_id) {
@@ -24,9 +22,11 @@ module.exports = (id) => {
             return fetchApi(res.in_reply_to_status_id_str)
             .then(res2 => {
                 originalTweet = {
+                    id: res2.id_str,
                     text: res2.text,
                     user: {
-                        username: res.user.screen_name
+                        id: res2.user.id_str,
+                        username: res2.user.screen_name
                     },
                     likes: res2.favorite_count,
                     retweets: res2.retweet_count
@@ -37,8 +37,10 @@ module.exports = (id) => {
         } else if(res.is_quote_status === true) {
             type = 'quote';
             originalTweet = {
+                id: res.quoted_status.id_str,
                 text: res.quoted_status.text,
                 user: {
+                    id: res.quoted_status.user.id_str,
                     username: res.quoted_status.user.screen_name
                 },
                 likes: res.quoted_status.favorite_count,

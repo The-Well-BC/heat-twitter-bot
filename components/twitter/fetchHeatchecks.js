@@ -1,7 +1,6 @@
 let searchTweets = require('./api/searchTweets');
 
 module.exports = function(data) {
-
     let { minLikes, minRetweets } = data;
 
     if(minLikes == null || minLikes == undefined)

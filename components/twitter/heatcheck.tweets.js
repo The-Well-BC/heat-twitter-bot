@@ -4,8 +4,6 @@ module.exports = (payload) => {
 
     let id = payload.data.id;
 
-    console.log('PAYLOAD', payload, '\nID:', id);
-
     return fetchTweet(id)
     .then(res => {
         let response = res;

@@ -1,24 +1,51 @@
+const axios = require('axios');
+
 const MIN_LIKES = 3;
+const tweet = require('./api/tweet');
 const fetchTweet = require('./api/fetchTweet');
+const fetchHeatchecks = require('./fetchHeatchecks');
 
 module.exports = function(payload) {
-    return fetchTweet(payload)
-    .then(res =>{
-        console.log('HEATCHECK PAYOUTS', res);
+    return fetchHeatchecks({ minLikes: MIN_LIKES })
+    .then(res => {
+        // return Promise.all(res.map(item => {
+        let promises = res.map(item => {
+            let artistID = item.originalTweet.user.id;
+            let artist = item.originalTweet.user.username;
+            let curator = item.user.username;
 
-        let artist = res.originalTweet.user.username;
-        let curator = res.user.username;
+            let message = {};
 
-        let message = `Yo @${artist}, you've been #HEATCHECKED.\nTap in to claim your $HEAT - `;
+            message.text = `Yo @${artist}, you've been #HEATCHECKED.\nTap in to claim your $HEAT - `;
 
-        let claimLink = `https://link.mintgate.app/api/2/drop/create?api=true&uid=220&incby=1&claimmax=1&tid=$HEAT&fortwitter=${artist}&pkey=${process.env.MINTGATE_PKEY}`;
+            message.replyTo = {
+                id: artistID,
+                username: artist
+            }
 
-        message = message + claimLink;
+            console.log('MESSAGE', message);
 
-        console.log('CLAIM LINK', message);
+            let mintgateURL = `https://link.mintgate.app/api/2/drop/create?api=true&uid=220&incby=1&claimmax=1&tid=$HEAT&fortwitter=${artist}&pkey=${process.env.MINTGATE_PKEY}`;
 
-        if(res.originalTweet.likes > MIN_LIKES) {
-            return postTweet(message)
-        }
+            console.log('MINTAGE URL', mintgateURL);
+            return axios.get(mintgateURL)
+            .then(res2 => {
+                console.log('GOT CLAIM LINK FROM MMINTGATE', res2);
+                let claimLink = res2.data.claim_url;
+
+                message.text += claimLink;
+
+                console.log('CLAIM LINK', message);
+
+                return tweet(message)
+            }).catch(e => {
+                console.log('ERROR CREATING TOKEN CLAIM LINK\nError:', e);
+                throw e;
+            });
+        });
+
+        console.log('PROMISES', promises);
+
+        return Promise.all(promises);
     });
 }

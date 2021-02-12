@@ -20,8 +20,6 @@ module.exports = (payload) => {
     if(payload.minRetweets)
         q += ' min_retweets:' + payload.minRetweets;
 
-    console.log('QUERY:', q);
-
     return new Promise(function(resolve, reject) {
         client.get('search/tweets', {q}, function(error, tweets, response) {
             if(error) {
@@ -44,8 +42,10 @@ module.exports = (payload) => {
                         type = 'retweet';
 
                         originalTweet = {
+                            id: item.retweeted_status.id,
                             text: item.retweeted_status.text,
                             user: { 
+                                id: item.retweeted_status.user.id_str,
                                 username: item.retweeted_status.user.screen_name
                             }
                         }
@@ -54,21 +54,25 @@ module.exports = (payload) => {
                         originalTweet = {
                             text: item.quoted_status.text,
                             user: { 
+                                id: item.quoted_status.user.id_str,
                                 username: item.quoted_status.user.screen_name
                             }
                         }
                     } else if(item.in_reply_to_status_id) {
                         type = 'reply';
                         let otweet = await fetchTweet(item.in_reply_to_status_id_str);
-                        originalTweet = otweet.tweet;
+                        originalTweet = otweet;
+                        originalTweet.id = otweet.id;
                     }
 
                     return {
+                        id: item.id,
                         type,
                         likes: item.favorite_count,
                         retweets: item.retweet_count,
                         text: item.text,
                         user: {
+                            id: item.user.id_str,
                             username: item.user.screen_name
                         },
                         hashtags: item.entities.hashtags.map(h => h.text),
