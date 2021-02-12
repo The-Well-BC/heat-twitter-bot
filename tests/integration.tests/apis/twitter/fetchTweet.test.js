@@ -8,33 +8,39 @@ const fetchHeatchecks = require('../../../../components/twitter/fetchHeatchecks'
 
 const sampleStream = require('../../../sampleStreamEvents');
 
+const tweetKeys = ['id', 'text', 'user', 'retweets', 'likes'];
+
 describe('Twitter API', function() {
-    it('Fetch quote tweet', function() {
-        return fetchTweet(sampleStream.quoteTweet.data.id)
+    it('#flaky Fetch quote tweet', function() {
+
+        // Flaky because tweet might be deleted.
+        let id = '1353112292414648320';
+
+        return fetchTweet(id)
         .then(res => {
-            expect(res).to.have.keys('type', 'tweet', 'originalTweet');
+            expect(res).to.have.keys('type', ...tweetKeys, 'originalTweet');
+            expect(res.id).to.equal(id);
             expect(res).to.have.property('type', 'quote');
 
-            expect([res.tweet, res.originalTweet]).to.all.have.keys('text', 'user', 'retweets', 'likes');
-            expect(res.tweet.text).to.match(/#HEATCHECKME This is a quote tweet/);
-            expect(res.originalTweet.text).to.match(/Another artwork upload/);
+            expect(res.originalTweet).to.have.keys(tweetKeys);
+            expect(res.text).to.match(/My mans needs a #HEATCHECKME/);
+            expect(res.originalTweet.text).to.match(/Ima cry now/);
         });
     });
 
-    it('Fetch reply tweet', function() {
-        return fetchTweet(sampleStream.reply.data.id)
+    it('#flaky Fetch reply tweet', function() {
+        let id = '1349611004926296067';
+        return fetchTweet(id)
         .then(res => {
-            expect(res).to.have.keys('type', 'tweet', 'originalTweet');
+            expect(res.id).to.equal(id);
+            expect(res).to.have.keys('type', ...tweetKeys, 'originalTweet');
             expect(res).to.have.property('type', 'reply');
-            expect([res.tweet, res.originalTweet]).to.all.have.keys('text', 'user', 'retweets', 'likes');
-            expect(res.tweet).to.eql({
-                text: '#HEATCHECK This is a tweet reply',
-                user: {
-                    username: 'testing_another'
-                },
-                likes: 0, retweets: 0
+
+            expect(res.text).to.equal('CAN I GET A $HEAT CHECK?! #heatcheckme pls');
+            expect(res.user).to.eql({
+                username: 'TheNamesBria_'
             });
-            expect(res.originalTweet.text).to.match(/Testing testing... This is my art asdff/);
+            expect(res.originalTweet.text).to.match(/THE TALENT\./);
         });
     });
 
@@ -44,8 +50,9 @@ describe('Twitter API', function() {
         return fetchHeatchecks({ minLikes })
         .then(res => {
             expect(res).to.not.be.empty;
-            expect(res).to.all.have.keys('likes', 'retweets', 'originalTweet', 'type', 'text', 'hashtags', 'user');
+            expect(res).to.all.have.keys(...tweetKeys, 'originalTweet', 'type', 'hashtags');
             expect(res).to.all.satisfy(tweet => {
+                expect([tweet.user, tweet.originalTweet.user]).to.all.have.property('id');
                 expect(tweet.likes).to.be.at.least(minLikes);
                 expect(tweet.type).to.be.oneOf(['reply', 'quote']);
 
