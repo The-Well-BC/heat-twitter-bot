@@ -19,7 +19,7 @@ module.exports = function(payload) {
             message.text = `Yo @${artist}, you've been #HEATCHECKED.\nTap in to claim your $HEAT - `;
 
             message.replyTo = {
-                id: artistID,
+                id: item.id,
                 username: artist
             }
 
@@ -30,7 +30,6 @@ module.exports = function(payload) {
             console.log('MINTAGE URL', mintgateURL);
             return axios.get(mintgateURL)
             .then(res2 => {
-                console.log('GOT CLAIM LINK FROM MMINTGATE', res2);
                 let claimLink = res2.data.claim_url;
 
                 message.text += claimLink;
