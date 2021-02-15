@@ -19,7 +19,7 @@ module.exports = function(payload) {
             message.text = `Yo @${artist}, you've been #HEATCHECKED.\nTap in to claim your $HEAT - `;
 
             message.replyTo = {
-                id: item.id,
+                id: item.originalTweet.id,
                 username: artist
             }
 
@@ -27,14 +27,11 @@ module.exports = function(payload) {
 
             let mintgateURL = `https://link.mintgate.app/api/2/drop/create?api=true&uid=220&incby=1&claimmax=1&tid=$HEAT&fortwitter=${artist}&pkey=${process.env.MINTGATE_PKEY}`;
 
-            console.log('MINTAGE URL', mintgateURL);
             return axios.get(mintgateURL)
             .then(res2 => {
                 let claimLink = res2.data.claim_url;
 
                 message.text += claimLink;
-
-                console.log('CLAIM LINK', message);
 
                 return tweet(message)
             }).catch(e => {
