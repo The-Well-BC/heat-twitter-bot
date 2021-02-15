@@ -6,7 +6,7 @@
   "scripts": {
     "start": ". ./.env && NODE_ENV=production pm2 start ./.bin/www.js --name heatbot --time && pm2 save",
     "stop": "pm2 stop heatbot && pm2 delete heatbot",
-    "test": ". ./.env && NODE_ENV=test mocha --timeout 10000 --recursive tests/ --require tests/hooks.js",
+    "test": ". ./.env && NODE_ENV=test mocha --timeout 10000 --grep '#danger' --invert --recursive tests/ --require tests/hooks.js",
     "test:dev": ". ./.env && NODE_ENV=test mocha --timeout 30000 --recursive tests/ --grep '#dev' --require tests/hooks.js --watch",
     "test:unit": ". ./.env && NODE_ENV=test mocha --recursive tests/unit.tests --watch",
     "update-staging": "git pull origin main && npm i && npm stop && npm start",
