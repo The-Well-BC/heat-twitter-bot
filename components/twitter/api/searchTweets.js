@@ -14,6 +14,8 @@ module.exports = (payload) => {
 
     let q = payload.query;
 
+    let urlExtra = '?tweet.fields=author_id,conversation_id,in_reply_to_user_id_str,referenced_tweets';
+
     if(!isNaN(payload.minLikes))
         q += ' min_faves:' + payload.minLikes;
 
@@ -21,6 +23,8 @@ module.exports = (payload) => {
         q += ' min_retweets:' + payload.minRetweets;
 
     return new Promise(function(resolve, reject) {
+        // let url = 'https://api.twitter.com/2/tweets?ids=1225917697675886593&tweet.fields=author_id,conversation_id,created_at,in_reply_to_user_id,referenced_tweets&expansions=author_id,in_reply_to_user_id,referenced_tweets.id&user.fields=name,username' \
+
         client.get('search/tweets', {q}, function(error, tweets, response) {
             if(error) {
                 reject(error);
@@ -35,6 +39,7 @@ module.exports = (payload) => {
                     */
 
                     // console.log('ITEM', item);
+
 
                     let originalTweet, type;
 
