@@ -18,11 +18,11 @@ describe('Twitter API', function() {
 
         return fetchTweet(id)
         .then(res => {
-            expect(res).to.have.keys('type', ...tweetKeys, 'originalTweet');
+            expect(res).to.be.tweet;
+
             expect(res.id).to.equal(id);
             expect(res).to.have.property('type', 'quote');
 
-            expect(res.originalTweet).to.have.keys(tweetKeys);
             expect(res.text).to.match(/My mans needs a #HEATCHECKME/);
             expect(res.originalTweet.text).to.match(/Ima cry now/);
         });
@@ -32,14 +32,12 @@ describe('Twitter API', function() {
         let id = '1349611004926296067';
         return fetchTweet(id)
         .then(res => {
+            expect(res).to.all.be.tweet;
             expect(res.id).to.equal(id);
-            expect(res).to.have.keys('type', ...tweetKeys, 'originalTweet');
             expect(res).to.have.property('type', 'reply');
 
             expect(res.text).to.equal('CAN I GET A $HEAT CHECK?! #heatcheckme pls');
-            expect(res.user).to.eql({
-                username: 'TheNamesBria_'
-            });
+            expect(res.user.username).to.equal('TheNamesBria_');
             expect(res.originalTweet.text).to.match(/THE TALENT\./);
         });
     });
