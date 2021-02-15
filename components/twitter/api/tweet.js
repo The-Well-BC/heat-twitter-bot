@@ -17,7 +17,7 @@ module.exports = (payload) => {
 
     if(payload.replyTo && payload.replyTo.id) {
         body.in_reply_to_status_id = payload.replyTo.id;
-        body.status += ` @${payload.replyTo.username}`;
+        body.status = ` @${payload.replyTo.username}\n\n${body.status}`;
     }
 
     return new Promise(function(resolve, reject) {
