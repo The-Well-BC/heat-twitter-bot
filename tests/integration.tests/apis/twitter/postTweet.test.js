@@ -6,15 +6,15 @@ const tweet = require('../../../../components/twitter/api/tweet');
 
 const tweetKeys = ['id', 'text', 'user', 'retweets', 'likes'];
 
-describe('Twitter API', function() {
+describe.only('#dev Twitter API', function() {
     it('Post tweet reply', function() {
 
         // Flaky because tweet might be deleted.
         let payload = {
-            text: 'Testing testing...\n' + new Date(),
+            text: 'Testing tweet reply...\n' + new Date(),
             replyTo: {
-                id: '1359201894153994256',
-                username: 'another_testing'
+                id: '1360303032039268352',
+                username: 'Zigyzoe'
             }
         }
 
@@ -22,6 +22,7 @@ describe('Twitter API', function() {
         .then(res => {
             expect(res).to.have.keys('id', 'text', 'user', 'originalTweet');
             expect(res.originalTweet).to.have.property('id', payload.replyTo.id);
+            expect(res.text).to.match(/^@Zigyzoe/);
         });
     });
 
