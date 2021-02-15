@@ -1,91 +1,115 @@
 const Twitter = require('twitter');
-const fetchTweet = require('./fetchTweet');
+const axios = require('axios');
 
 module.exports = (payload) => {
-    const client = new Twitter({
-        consumer_key: process.env.TWITTER_API_KEY,
-        consumer_secret: process.env.TWITTER_SECRET_KEY,
-        access_token_key: process.env.TWITTER_BOT_ACCESS_TOKEN,
-        access_token_secret: process.env.TWITTER_BOT_ACCESS_TOKEN_SECRET,
-    });
-
     if(!payload.query)
         throw new Error('Must supply search query');
 
     let q = payload.query;
 
-    let urlExtra = '?tweet.fields=author_id,conversation_id,in_reply_to_user_id_str,referenced_tweets';
+    if(payload.queries) {
+        q = payload.queries.map(query => q += query);
+    }
 
-    if(!isNaN(payload.minLikes))
-        q += ' min_faves:' + payload.minLikes;
+    if(payload.authorID) {
+        q += ' author_id:' + payload.authorID;
+    }
 
-    if(payload.minRetweets)
-        q += ' min_retweets:' + payload.minRetweets;
+    // q = q.replace(/\s+/g, '+');
+    // q = encodeURIComponent(q);
+    q = q.replace(/\(/g, '%28').replace(/\)/g, '%29')
+        .replace(/\#/g, '%23')
+        .replace(/\:/g, '%3A');
 
-    return new Promise(function(resolve, reject) {
-        // let url = 'https://api.twitter.com/2/tweets?ids=1225917697675886593&tweet.fields=author_id,conversation_id,created_at,in_reply_to_user_id,referenced_tweets&expansions=author_id,in_reply_to_user_id,referenced_tweets.id&user.fields=name,username' \
+    let url = `https://api.twitter.com/2/tweets/search/recent`;
+    if(q)
+        url += `?query=${q}&tweet.fields=conversation_id,created_at,public_metrics,author_id,referenced_tweets&expansions=author_id,referenced_tweets.id,referenced_tweets.id.author_id&user.fields=id,name,username&max_results=50`;
 
-        client.get('search/tweets', {q}, function(error, tweets, response) {
-            if(error) {
-                reject(error);
-            } else {
-                // console.log(tweets);
-                resolve( Promise.all(tweets.statuses.map(async item => {
-                    /*
-                    if(item.entities.hashtags.length < 1) {
-                        console.log('ENTITIES', item.entities);
-                        console.log('#HASHTAGS', item.entities.hashtags);
+    return axios.get(url, {
+        headers: {Authorization:  `Bearer ${process.env.TWITTER_BEARER_TOKEN}`}
+    })
+    .then(response => {
+        let includes = response.data.includes;
+        return response.data.data.filter(i => {
+            let likes = i.public_metrics.like_count;
+            let retweets = i.public_metrics.like_count;
+
+            let c = true;
+
+            if(!isNaN(payload.minLikes))
+                c = c && (likes < payload.minLikes);
+
+            if(payload.minRetweets)
+                c = c && (retweets < payload.minRetweets);
+
+            return c;
+        }).map( i => {
+            let type = (i.referenced_tweets && i.referenced_tweets.length === 1) ? i.referenced_tweets[0].type : 'tweet';
+
+            type = (type == 'replied_to') ? 'reply' : (type == 'quoted') ? 'quote' : 'tweet';
+
+            switch(type) {
+                case 'retweeted':
+                    type = 'retweet';
+                    break;
+                case 'quoted':
+                    type = 'quote';
+                    break;
+            }
+
+            let user = {
+                id: i.author_id,
+            },
+                originalTweet;
+
+            if(i.referenced_tweets && i.referenced_tweets.length == 1) {
+                originalTweet = {
+                    id: i.referenced_tweets[0].id
+                }
+            }
+
+            includes.tweets.forEach(e => {
+                if(originalTweet && originalTweet.id == e.id) {
+                    console.log('REFERNCED TWEET', e);
+                    originalTweet.conversationID = e.conversation_id;
+                    originalTweet.text = e.text;
+                    originalTweet.user = {
+                        id: e.author_id
                     }
-                    */
+                    originalTweet.likes = e.public_metrics.like_count;
+                    originalTweet.retweets = e.public_metrics.like_count;
+                    return;
+                }
+            });
 
-                    // console.log('ITEM', item);
+            includes.users.forEach(e => {
+                if(user.id == e.id) {
+                    user.name = e.name;
+                    user.username = e.username;
+                }
 
+                if(originalTweet && originalTweet.user.id == e.id) {
+                    originalTweet.user.name = e.name;
+                    originalTweet.user.username = e.username;
+                }
+            });
 
-                    let originalTweet, type;
-
-                    if(item.retweeted_status) {
-                        type = 'retweet';
-
-                        originalTweet = {
-                            id: item.retweeted_status.id,
-                            text: item.retweeted_status.text,
-                            user: { 
-                                id: item.retweeted_status.user.id_str,
-                                username: item.retweeted_status.user.screen_name
-                            }
-                        }
-                    } else if(item.is_quote_status === true) {
-                        type = 'quote';
-                        originalTweet = {
-                            text: item.quoted_status.text,
-                            user: { 
-                                id: item.quoted_status.user.id_str,
-                                username: item.quoted_status.user.screen_name
-                            }
-                        }
-                    } else if(item.in_reply_to_status_id) {
-                        type = 'reply';
-                        let otweet = await fetchTweet(item.in_reply_to_status_id_str);
-                        originalTweet = otweet;
-                        originalTweet.id = otweet.id;
-                    }
-
-                    return {
-                        id: item.id,
-                        type,
-                        likes: item.favorite_count,
-                        retweets: item.retweet_count,
-                        text: item.text,
-                        user: {
-                            id: item.user.id_str,
-                            username: item.user.screen_name
-                        },
-                        hashtags: item.entities.hashtags.map(h => h.text),
-                        ...originalTweet && {originalTweet}
-                    }
-                })));
+            return {
+                id: i.id,
+                type,
+                text: i.text,
+                ...originalTweet && {originalTweet},
+                user,
+                conversationID: i.conversation_id,
+                likes: i.public_metrics.like_count,
+                retweets: i.public_metrics.retweet_count,
             }
         });
+    }).catch(e => {
+        console.log('ERROR', e);
+        throw e;
     });
 }
+
+
 
