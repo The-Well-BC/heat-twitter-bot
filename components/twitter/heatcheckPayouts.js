@@ -20,7 +20,7 @@ module.exports = function(payload) {
             // Reply to #HEATCHECKME tweet by curator, but put artist in the username field
             message.replyTo = {
                 id: item.id,
-                username: artist
+                username: curator
             }
 
             let mintgateURL = `https://link.mintgate.app/api/2/drop/create?api=true&uid=220&incby=1&claimmax=1&tid=$HEAT&fortwitter=${artist}&pkey=${process.env.MINTGATE_PKEY}`;
