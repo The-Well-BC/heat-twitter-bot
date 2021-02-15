@@ -3,7 +3,7 @@ chai.use( require('chai-things') );
 const expect = chai.expect;
 
 const fetchBotHeatchecks = require('../../../../components/twitter/fetchBotHeatchecks');
-const searchTweets = require('../../../../components/twitter/api/searchTweets2');
+const searchTweets = require('../../../../components/twitter/api/searchTweets');
 
 const tweetKeys = ['id', 'text', 'user', 'retweets', 'likes'];
 

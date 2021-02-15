@@ -7,7 +7,7 @@ const heatcheckPayout = require('../../../../components/twitter/heatcheckPayouts
 let tweetID = '1353112292414648320';
 const tweetKeys = ['id', 'text', 'user', 'retweets', 'likes'];
 
-describe('#watch #flaky Twitter API - HEATCHECK artist', function() {
+describe('#watch #danger #flaky Twitter API - HEATCHECK artist', function() {
     // Won't work here because we're using the testing twitter bot.
     this.timeout(10000);
     it('Send heatcheck confirmation tweet and claim link', function() {

@@ -10,7 +10,7 @@ describe('#dev Twitter API - fetch user', function() {
     it('#flaky Fetch User', function() {
 
         // Flaky because tweet might be deleted.
-        let username = 'another_testing';
+        let username = 'testing_another';
 
         return searchUser(username)
         .then(res => {

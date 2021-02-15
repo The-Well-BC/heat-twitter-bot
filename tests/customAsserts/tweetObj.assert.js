@@ -4,16 +4,19 @@ module.exports = function(chai, utils) {
     let Assertion = chai.Assertion;
     let expect = chai.expect;
 
-    const tweetKeys = ['id', 'text', 'user', 'retweets', 'likes'];
+    const tweetKeys = ['id', 'text', 'user', 'retweets', 'likes', 'conversationID'];
     const userKeys = ['id', 'username', 'name'];
     const tweetTypes = ['reply', 'quote', 'tweet'];
 
     Assertion.addProperty('tweet', function() {
         let arr = this._obj;
 
+        if( !Array.isArray(arr) )
+            arr = [arr];
+
         return arr.every(item => {
 
-            expect(item).to.include.keys(...tweetKeys, 'type', 'conversationID');
+            expect(item).to.include.keys(...tweetKeys, 'type');
 
             // Test user objects
             let users = [item.user];
