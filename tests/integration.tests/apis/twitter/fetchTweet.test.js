@@ -43,33 +43,4 @@ describe('Twitter API', function() {
             expect(res.originalTweet.text).to.match(/THE TALENT\./);
         });
     });
-
-    it('#dev #flaky Fetch #HEATCHECKME tweets', function() {
-        let minLikes = 0;
-
-        return fetchHeatchecks({ minLikes })
-        .then(res => {
-            expect(res).to.not.be.empty;
-            expect(res).to.all.have.keys(...tweetKeys, 'originalTweet', 'type', 'hashtags');
-            expect(res).to.all.satisfy(tweet => {
-                expect([tweet.user, tweet.originalTweet.user]).to.all.have.property('id');
-                expect(tweet.likes).to.be.at.least(minLikes);
-                expect(tweet.type).to.be.oneOf(['reply', 'quote']);
-
-                return true;
-            });
-        });
-    });
-});
-
-describe('Fetch #HEATCHECK tweet', function() {
-    it('Fetch #HEATCHECK tweet', function() {
-        return heatcheckTweet(sampleStream.quoteTweet)
-        .then(res => {
-            expect(res).to.have.keys('artist', 'curator', 'artwork');
-            expect([res.artist, res.curator]).to.all.equal("testing_another");
-
-            // expect(artwork).to.equal();
-        });
-    });
 });
