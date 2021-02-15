@@ -6,7 +6,7 @@ module.exports = function(data) {
     if(minLikes == null || minLikes == undefined)
         minLikes = 10;
 
-    // Feb 14, 2021. 4:31am GMT+1
+    // Feb 15, 2021. 2:37pm GMT+1
     let start_time = new Date(1613396271869).toISOString();
 
     let searchQuery  = { query: `(#heatcheckme (is:quote OR is:reply)) OR (#heatchecked from:HEATCHECKME)&start_time=${start_time}` };
@@ -25,22 +25,8 @@ module.exports = function(data) {
         return heatcheckmes.filter(i => {
             let c1 = i.likes >= minLikes;
             let botConvoIds = botTweets.map(i => i.conversationID);
-            console.log('BOT CONVERSATION IDS', botConvoIds);
 
             let c2 = !botConvoIds.includes(i.conversationID);
-
-            /*
-            console.log('\n\n\nUSERNAME:', i.user.username, '\n');
-            botTweets.reduce((acc, b) => {
-                console.log('BOT TEXT DOES NOT INCLUDE TWEET USERNAME:', acc,'\n');
-                console.log('BB:', b.text);
-                return acc && !b.text.includes('@' + i.user.username);
-            }, true);
-
-            let ctemp = !botTweets.reduce((acc, b) => acc && b.text.includes('@' + i.user.username), true);
-
-            console.log('TEMP CONDITION:', ctemp);
-            */
 
             return c1 && c2;
         });

@@ -70,7 +70,6 @@ module.exports = (payload) => {
 
             includes.tweets.forEach(e => {
                 if(originalTweet && originalTweet.id == e.id) {
-                    console.log('REFERNCED TWEET', e);
                     originalTweet.conversationID = e.conversation_id;
                     originalTweet.text = e.text;
                     originalTweet.user = {
