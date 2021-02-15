@@ -24,6 +24,10 @@ module.exports = function(data) {
 
         return heatcheckmes.filter(i => {
             let c1 = i.likes >= minLikes;
+            let botConvoIds = botTweets.map(i => i.conversationID);
+            console.log('BOT CONVERSATION IDS', botConvoIds);
+
+            let c2 = !botConvoIds.includes(i.conversationID);
 
             /*
             console.log('\n\n\nUSERNAME:', i.user.username, '\n');
@@ -38,8 +42,7 @@ module.exports = function(data) {
             console.log('TEMP CONDITION:', ctemp);
             */
 
-            // return c1 && ctemp;
-            return c1;
+            return c1 && c2;
         });
     });
 }
