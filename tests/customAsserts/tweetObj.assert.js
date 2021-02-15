@@ -13,13 +13,13 @@ module.exports = function(chai, utils) {
 
         return arr.every(item => {
 
-            let users = [item.user];
-
             expect(item).to.include.keys(...tweetKeys, 'type', 'conversationID');
 
-            let tweets = [item, item.originalTweet].filter(i => i != undefined && i != null);
+            // Test user objects
+            let users = [item.user];
 
-            expect(tweets.map(t => t.user)).to.all.have.keys('id', 'username', 'name');
+            // Test tweets
+            let tweets = [item, item.originalTweet].filter(i => i != undefined && i != null);
 
             if(item.originalTweet) {
                 expect(item.originalTweet).to.have.keys(...tweetKeys);
@@ -27,6 +27,8 @@ module.exports = function(chai, utils) {
             }
 
             expect(users).to.all.have.keys(userKeys);
+
+            expect(Object.values(users).flat().map(i => i.username)).to.all.not.be.undefined
 
             expect(item.type).to.be.oneOf(tweetTypes);
         });

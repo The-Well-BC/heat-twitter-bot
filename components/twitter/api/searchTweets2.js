@@ -46,6 +46,8 @@ module.exports = (payload) => {
         }).map( i => {
             let type = (i.referenced_tweets && i.referenced_tweets.length === 1) ? i.referenced_tweets[0].type : 'tweet';
 
+            type = (type == 'replied_to') ? 'reply' : (type == 'quoted') ? 'quote' : 'tweet';
+
             switch(type) {
                 case 'retweeted':
                     type = 'retweet';
@@ -82,12 +84,11 @@ module.exports = (payload) => {
                 if(user.id == e.id) {
                     user.name = e.name;
                     user.username = e.username;
-                    return;
                 }
+
                 if(originalTweet && originalTweet.user.id == e.id) {
                     originalTweet.user.name = e.name;
                     originalTweet.user.username = e.username;
-                    return;
                 }
             });
 

@@ -15,6 +15,8 @@ describe.only('#dev Fetch #HEATCHECK tweet', function() {
         return fetchHeatchecks({ minLikes })
         .then(tweets => {
             expect(tweets).to.not.be.empty;
+            // console.log('TWEETS', tweets.map(t => t.user));
+            expect(tweets).to.be.tweet;
             // console.log('TWEET CONVO IDS', tweets.map(i => i.conversationID))
             expect(tweets.map(t => t.likes)).to.all.be.gte(minLikes);
             return fetchBotHeatchecks()
