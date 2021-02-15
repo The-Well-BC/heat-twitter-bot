@@ -6,7 +6,8 @@ module.exports = function(data) {
     if(minLikes == null || minLikes == undefined)
         minLikes = 10;
 
-    let start_time = new Date(1613359910000).toISOString();
+    // Feb 14, 2021. 4:31am GMT+1
+    let start_time = new Date(1613396271869).toISOString();
 
     let searchQuery  = { query: `(#heatcheckme (is:quote OR is:reply)) OR (#heatchecked from:HEATCHECKME)&start_time=${start_time}` };
 
