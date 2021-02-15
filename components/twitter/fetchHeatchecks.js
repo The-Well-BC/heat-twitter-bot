@@ -1,4 +1,4 @@
-let searchTweets = require('./api/searchTweets2');
+let searchTweets = require('./api/searchTweets');
 
 module.exports = function(data) {
     let { minLikes, minRetweets } = data;
@@ -6,7 +6,9 @@ module.exports = function(data) {
     if(minLikes == null || minLikes == undefined)
         minLikes = 10;
 
-    let searchQuery  = { query: '(#heatcheckme (is:quote OR is:reply)) OR (#heatchecked from:HEATCHECKME)' };
+    let start_time = new Date(1613364892494).toISOString();
+
+    let searchQuery  = { query: `(#heatcheckme (is:quote OR is:reply)) OR (#heatchecked from:HEATCHECKME)&start_time=${start_time}` };
 
     return searchTweets(searchQuery)
     .then(res => {

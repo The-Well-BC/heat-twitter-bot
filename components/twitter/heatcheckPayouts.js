@@ -2,7 +2,6 @@ const axios = require('axios');
 
 const MIN_LIKES = 3;
 const tweet = require('./api/tweet');
-const fetchTweet = require('./api/fetchTweet');
 const fetchHeatchecks = require('./fetchHeatchecks');
 
 module.exports = function(payload) {
@@ -18,12 +17,11 @@ module.exports = function(payload) {
 
             message.text = `Yo @${artist}, you've been #HEATCHECKED.\nTap in to claim your $HEAT - `;
 
+            // Reply to #HEATCHECKME tweet by curator, but put artist in the username field
             message.replyTo = {
-                id: item.originalTweet.id,
+                id: item.id,
                 username: artist
             }
-
-            console.log('MESSAGE', message);
 
             let mintgateURL = `https://link.mintgate.app/api/2/drop/create?api=true&uid=220&incby=1&claimmax=1&tid=$HEAT&fortwitter=${artist}&pkey=${process.env.MINTGATE_PKEY}`;
 
