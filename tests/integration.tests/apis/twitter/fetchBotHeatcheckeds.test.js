@@ -7,7 +7,7 @@ const searchTweets = require('../../../../components/twitter/api/searchTweets');
 
 const tweetKeys = ['id', 'text', 'user', 'retweets', 'likes'];
 
-describe('#dev Fetch bot #HEATCHECKED tweets', function() {
+describe('Fetch bot #HEATCHECKED tweets', function() {
     it('Fetch Bot #HEATCHECK tweets', function() {
         return fetchBotHeatchecks()
         .then(res => {

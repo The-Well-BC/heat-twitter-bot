@@ -6,7 +6,7 @@ const tweet = require('../../../../components/twitter/api/tweet');
 
 const tweetKeys = ['id', 'text', 'user', 'retweets', 'likes'];
 
-describe.only('#dev Twitter API', function() {
+describe('Twitter API', function() {
     it('Post tweet reply', function() {
 
         // Flaky because tweet might be deleted.

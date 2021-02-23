@@ -2,11 +2,11 @@ const chai = require('chai');
 chai.use( require('chai-things') );
 const expect = chai.expect;
 
-const searchUser = require('../../../../components/twitter/api/searchUser');
+const searchUser = require('../../../../components/twitter/api/searchUsers');
 
-const tweetKeys = ['id', 'text', 'user', 'retweets', 'likes'];
+const userKeys = ['username', 'id', 'avatar', 'displayName'];
 
-describe('#dev Twitter API - fetch user', function() {
+describe('Twitter API - fetch user', function() {
     it('#flaky Fetch User', function() {
 
         // Flaky because tweet might be deleted.
@@ -14,14 +14,12 @@ describe('#dev Twitter API - fetch user', function() {
 
         return searchUser(username)
         .then(res => {
-            expect(res).to.have.property('name', 'AnotherBotTestingAccount');
-            expect(res).to.have.keys('type', ...tweetKeys, 'originalTweet');
-            expect(res.id).to.equal(id);
-            expect(res).to.have.property('type', 'quote');
+            expect(res).to.have.lengthOf(1);
 
-            expect(res.originalTweet).to.have.keys(tweetKeys);
-            expect(res.text).to.match(/My mans needs a #HEATCHECKME/);
-            expect(res.originalTweet.text).to.match(/Ima cry now/);
+            expect(res).to.all.have.property('displayName', 'AnotherBotTestingAccount');
+            expect(res).to.all.have.keys(userKeys);
+
+            expect(res[0].username).to.equal(username);
         });
     });
 });

@@ -6,7 +6,7 @@ const request = require('supertest');
 const links = require('../../config/links');
 const app = require('../../app');
 
-describe('#dev Fetch twitter user details for DEX', function() {
+describe('Fetch twitter user details for DEX', function() {
     it('#flaky Fetch multiple users', function() {
 
         const payload = { usernames: ['Zigyzoe', 'another_testing', 'testing_another'] };

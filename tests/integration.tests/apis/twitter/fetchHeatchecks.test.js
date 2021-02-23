@@ -8,7 +8,7 @@ const searchTweets = require('../../../../components/twitter/api/searchTweets');
 
 const tweetKeys = ['id', 'text', 'user', 'retweets', 'likes'];
 
-describe.only('#dev Fetch #HEATCHECKME tweets', function() {
+describe('Fetch #HEATCHECKME tweets', function() {
     it('Fetch #HEATCHECKME tweet', function() {
         let minLikes = 3;
 
