@@ -30,8 +30,12 @@ module.exports = (usernames) => {
             }
         });
     }).catch(e => {
-        console.log('ERROR', e);
-        throw e;
+        if(usernameStr == '')
+            return [];
+        else {
+            console.log('ERROR', e);
+            throw e;
+        }
     });
 }
 
