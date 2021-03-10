@@ -14,7 +14,7 @@ module.exports = (usernames) => {
     let usernameStr = usernames.join();
 
     let headers = {Authorization:  `Bearer ${process.env.TWITTER_BEARER_TOKEN}`};
-    let url = `https://api.twitter.com/2/users/by?usernames=${usernameStr}&user.fields=profile_image_url`;
+    let url = `https://api.twitter.com/2/users/by?usernames=${usernameStr}&user.fields=profile_image_url,description`;
 
     return axios.get(url, { headers })
     .then(response => {
@@ -24,6 +24,7 @@ module.exports = (usernames) => {
             return {
                 id: u.id,
                 username: u.username,
+                description: u.description,
                 avatar: u.profile_image_url,
                 displayName: u.name
             }
