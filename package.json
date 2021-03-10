@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": ". ./.env && NODE_ENV=production pm2 start ./.bin/www.js --name heatbot --time && pm2 save",
+    "dev": ". ./.env && NODE_ENV=development nodemon ./.bin/www.js",
     "stop": "pm2 stop heatbot && pm2 delete heatbot",
     "test": ". ./.env && NODE_ENV=test mocha --timeout 10000 --grep '#danger' --invert --recursive tests/ --require tests/hooks.js",
     "test:dev": ". ./.env && NODE_ENV=test mocha --timeout 30000 --recursive tests/ --grep '#dev' --require tests/hooks.js --watch",
@@ -27,6 +28,7 @@
   "homepage": "https://github.com/The-Well-BC/heat-twitter-bot#readme",
   "dependencies": {
     "axios": "^0.21.1",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "helmet": "^4.4.1",
     "needle": "^2.6.0",
